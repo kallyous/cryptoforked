@@ -1,14 +1,14 @@
 from cfrsa import genkeypairs, encrypt_encoded, decrypt_encoded, ext_eucl_mdc, modmultinv
 from offsetter import encode_str, decode_str
 
-
 ''' Recebe a opção escolhida pelo usuário e executa as operações pertinentes a esta opção.
     Nada é de fato implementado aqui dentro, tudo referente ao RSA é chamado por funções.
     Há uma pequena exceção, de uma operação de RSA redundante, pertinente à descriptografia,
     explicada em sua própria seção. A causa dessa redundância é a própria exigência do
     trabalho de Mat. Disc. '''
-def selectOption(opt):
 
+
+def selectOption(opt):
     # Opção de gerar chaves criptográficas.
     if opt == '1':
         # Nomes auto-descritivos dos arquivos que armazenarão informações das chaves.
@@ -89,8 +89,8 @@ def selectOption(opt):
             O que é feito aqui nada mais é do que repetir o cáculo da inversa multiplicativa modular de 'e',
             que é o nosso d. Como usamos (d n) para descriptografar e (e n) para criptografar, faz
             mais sentido armazenar-mos estas chaves e não (p q e). '''
-        n = p*q
-        fin = (p-1)*(q-1)
+        n = p * q
+        fin = (p - 1) * (q - 1)
         d = modmultinv(e, fin)
         # m, x, y = ext_eucl_mdc(e, fin)
         # d = int(e)*int(x)
@@ -124,11 +124,11 @@ def selectOption(opt):
         print('p={} q={} n={} e={} d={}'.format(p, q, n, e, d))
         # Escolha da mensagem a criptografar
         plain_str = 'BOM DIA'
-        #1 Encoda mensagem no acordo do projeto
+        # 1 Encoda mensagem no acordo do projeto
         encoded_str = encode_str(plain_str)
         print('Texto inicial:', plain_str)
         print('Texto encodado:', encoded_str)
-        #2 Criptografa mensagem
+        # 2 Criptografa mensagem
         encry_str = encrypt_encoded(encoded_str, e, n)
         print('Texto criptografado:', encry_str)
         print(120 * '-')
@@ -141,10 +141,10 @@ def selectOption(opt):
 
 # MAIN - O programa começa aqui!
 if __name__ == '__main__':
-    print(120*'-')
+    print(120 * '-')
     # Mensagem de título
     print('Cryptoforked 1.1.1b')
-    print(120*'-')
+    print(120 * '-')
     # Mensagem de opções disponíveis
     print('\nEscolha uma opção:\n\n1. Gerar chave pública\n2. Criptografar\n3. Descriptografar\n4. Debugar\n')
     # Lê opção escolhida pelo usuário
