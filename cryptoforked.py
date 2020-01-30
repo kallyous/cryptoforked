@@ -1,11 +1,12 @@
-from cfrsa import genkeypairs, encrypt_encoded, decrypt_encoded, ext_eucl_mdc, modmultinv
+from cfrsa import genkeypairs, encrypt_encoded, decrypt_encoded, modmultinv, is_prime
 from offsetter import encode_str, decode_str
 
-''' Recebe a opção escolhida pelo usuário e executa as operações pertinentes a esta opção.
+""" Recebe a opção escolhida pelo usuário e executa as operações pertinentes a esta opção.
     Nada é de fato implementado aqui dentro, tudo referente ao RSA é chamado por funções.
     Há uma pequena exceção, de uma operação de RSA redundante, pertinente à descriptografia,
     explicada em sua própria seção. A causa dessa redundância é a própria exigência do
-    trabalho de Mat. Disc. '''
+    trabalho de Mat. Disc.
+"""
 
 
 def selectOption(opt):
@@ -16,12 +17,25 @@ def selectOption(opt):
         pqe_name = 'rsa_p_q_e_key.priv'
         en_name = 'rsa_e_n_key.pub'
 
-        # Lê entrada do usuário
+        # Lê entrada do usuário.
         priv_key = input('Entre dois números primos distintos (p q): ')
-        # Quebra string em duas, contendo os valores de q p
+        # Quebra string em duas, contendo os valores de q p .
         p, q = priv_key.split()
-        # Converte q p nos números inteiros que eles descrevem e então gera chaves, obtendo todos os valores
-        pub, priv = genkeypairs(int(p), int(q))
+
+        # Converte q p nos números inteiros que eles descrevem e então gera chaves, obtendo todos os valores.
+        p = int(p)
+        q = int(q)
+
+        # Certifica que 'p' e 'q' são ambos primos.
+        if not is_prime(p):
+            print(f'{p} não é primo!')
+            return
+        elif not is_prime(q):
+            print(f'{q} não é primo!')
+            return
+
+        # Gera par de chaves pública e privada.
+        pub, priv = genkeypairs(p, q)
 
         e, n = pub
         d, n = priv

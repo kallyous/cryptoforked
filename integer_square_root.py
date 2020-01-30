@@ -28,5 +28,5 @@ def isqrt(x):
                 maior que X. Assim, apenas ajustamos o limite à direita da busca binária."""
             end = mid - 1
 
-    """ Ao sair do laço sem mid*mid==x, ans possui o menir inteiro mais pŕoximo da raiz desejada."""
+    """ Ao sair do laço sem mid*mid==x, ans possui o menor inteiro mais pŕoximo da raiz desejada."""
     return ans
