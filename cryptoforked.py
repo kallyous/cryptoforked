@@ -1,15 +1,15 @@
 from cfrsa import genkeypairs, encrypt_encoded, decrypt_encoded, modmultinv, is_prime
 from offsetter import encode_str, decode_str
 
-""" Recebe a opção escolhida pelo usuário e executa as operações pertinentes a esta opção.
-    Nada é de fato implementado aqui dentro, tudo referente ao RSA é chamado por funções.
-    Há uma pequena exceção, de uma operação de RSA redundante, pertinente à descriptografia,
-    explicada em sua própria seção. A causa dessa redundância é a própria exigência do
-    trabalho de Mat. Disc.
-"""
-
 
 def selectOption(opt):
+    """ Recebe a opção escolhida pelo usuário e executa as operações pertinentes a esta opção.
+        Nada é de fato implementado aqui dentro, tudo referente ao RSA é chamado por funções.
+        Há uma pequena exceção, de uma operação de RSA redundante, pertinente à descriptografia,
+        explicada em sua própria seção. A causa dessa redundância é a própria exigência do
+        trabalho de Mat. Disc.
+    """
+
     # Opção de gerar chaves criptográficas.
     if opt == '1':
         # Nomes auto-descritivos dos arquivos que armazenarão informações das chaves.
@@ -106,8 +106,6 @@ def selectOption(opt):
         n = p * q
         fin = (p - 1) * (q - 1)
         d = modmultinv(e, fin)
-        # m, x, y = ext_eucl_mdc(e, fin)
-        # d = int(e)*int(x)
         ''' -------------------------------------------------------------------------------------- '''
 
         # Carrega conteúdo criptografado do arquivo
@@ -137,7 +135,7 @@ def selectOption(opt):
         d, n = priv
         print('p={} q={} n={} e={} d={}'.format(p, q, n, e, d))
         # Escolha da mensagem a criptografar
-        plain_str = 'BOM DIA'
+        plain_str = 'ABC DEFGHIJKLMNOPQRSTUVWXYZ'
         # 1 Encoda mensagem no acordo do projeto
         encoded_str = encode_str(plain_str)
         print('Texto inicial:', plain_str)

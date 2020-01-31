@@ -4,7 +4,9 @@ from integer_square_root import isqrt
 
 
 def is_prime(num):
-    """Checa se número é primo."""
+    """Checa se número é primo.
+        Usa raiz inteira mais próxima para limitar busca por primos, agilizando a verificação.
+    """
     if num < 2:
         return False
     for n in range(2, isqrt(num) + 1):
@@ -32,8 +34,8 @@ def gen_e_d(p, q):
 
         # Se o mdc for 1, pega a inversa de e mod fin de dentro da tabela gerada pelo algoritmo.
         """ Vale ressaltar aqui que quando o mdc for 1, o valor de 'a' tal que
-            a é a inversa modular de e mod fin, será o valor de 's' da última linha com
-            resto não nul da tabela. Na sintaxe de python, len(coef) - 2 acerta a penultima linha
+            'a' é a inversa modular de e mod fin, será o valor de 's' da última linha com
+            resto não nulo da tabela. Na sintaxe de python, len(coef) - 2 acerta a penultima linha
             da tabela que, por conta do próprio algorítmo, possui o último valor não nulo do resto e
             é onde 's' assumi o valor da desejada inversa multiplicativa 'a'. """
         if res == 1:
@@ -41,12 +43,6 @@ def gen_e_d(p, q):
             inv = coef[i]['s']
             if inv > 0:
                 return e, inv
-
-
-def mdc(a, b):
-    """Algoritmo básico de Euclides."""
-    if b == 0: return a
-    return mdc(b, a % b)
 
 
 def genkeypairs(p, q):
@@ -62,14 +58,14 @@ def genkeypairs(p, q):
 
 def encryptpart(m, e, n):
     """Criptografa um caracter"""
-    # return exp_mod_rap(m, e, n)
-    return (m ** e) % n
+    return exp_mod(m, e, n)
+    # return (m ** e) % n
 
 
 def decryptpart(c, d, n):
     """Descriptografa um caracter"""
-    # return exp_mod_rap(c, d, n)
-    return (c ** d) % n
+    return exp_mod(c, d, n)
+    # return (c ** d) % n
 
 
 def encrypt_encoded(encoded_txt, e, n):
@@ -104,6 +100,47 @@ def decrypt_encoded(encry_text, d, n):
     for c in encry_nums:
         plain += ' {}'.format(decryptpart(c, d, n))
     return plain.strip()
+
+
+def p2_exp_mod(a, k, m):
+    """Calcula  a^k mod m  para  a,k,m sendo números inteiros e  k  sendo potência de 2.
+    :param a: Valor base.
+    :param k: Potência de 2.
+    :param m: Valor para o qual calcular módulo.
+    :return: (a^k) mod m
+    """
+    if k <= 2:
+        return a**k % m
+    else:
+        return (p2_exp_mod(a, k//2, m) * p2_exp_mod(a, k//2, m)) % m
+
+
+def exp_mod(a, k, m):
+    """Calcula  a^k mod m  para  a,k,m  sendo números inteiros.
+    :param a: Valor base.
+    :param k: Potência de a.
+    :param m: Valor para o qual calcular módulo.
+    :return: (a^k) mod m .
+    """
+    # Gera string com representação binária do valor de k.
+    binary_k = f'{k:b}'
+    # Pega contagem de bits.
+    bitcount = len(binary_k)
+
+    # Prepara variável para segurar as multiplicações.
+    A = 1
+
+    # Passa de bit em bit,
+    for i in range(0, bitcount):
+        # Checa se bit é 1, pois não nos interessa os 0.
+        if binary_k[i] == '1':
+            # Calcula a potência a elevar o 2, baseado na casa do bit.
+            p = bitcount - 1 - i  # O -1 é pq arrays começam no índice 0.
+            # Chama recursão que calcula exponenciação modular para potêcnias de 2 para o bit atual e incrementa A.
+            A *= p2_exp_mod(a, 2 ** p, m)
+
+    # Tira o módulo de A e o retorna.
+    return A % m
 
 
 def modmultinv(e, fin):
