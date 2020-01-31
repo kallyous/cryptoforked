@@ -41,6 +41,7 @@ def gen_e_d(p, q):
         if res == 1:
             i = len(coef) - 2
             inv = coef[i]['s']
+            # Normaliza inversa quando negativa
             if inv > 0:
                 return e, inv
 
