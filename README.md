@@ -7,7 +7,6 @@ Implementação de cripografia RSA em Python 3.6
 **Professor:** Bruno Almeida Pimentel  
 **Discentes:** Lucas Carvalho, Jadde Freitas, Pablo ~~Escobar~~ Vinicius
 
-Ativar ambiente virtual.  
-Feito com Python 3.6 .
+Ativar ambiente virtual.
 
 ---
