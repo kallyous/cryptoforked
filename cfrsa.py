@@ -17,31 +17,36 @@ def is_prime(num):
 
 def gen_e_d(p, q):
     """Gera (e d) usando o Algoritmo de Euclides Estendido.
-        Calcula ϕ(p*q), escolhe 'e' e usa Euclides Extendido para calcular 'd'.
-        eR1: 1 < e < ϕ(p*q)
-        eR2: e é co-primo de ϕ(p*q)
-        dR1: e*d ≅ 1 mod p*q  →  e*d mod p*q = 1
+        Calcula ϕ(p,q), escolhe 'e' e usa Euclides Extendido para calcular 'd'.
+        A função ϕ(p,q) é dada por  ϕ(p,q) = (p-1)*(q-1)  e lê-se "fi de p q".
+        1ª regra de e: 1 < e < ϕ(p*q)
+        2ª regra de e: e é co-primo de ϕ(p*q)
+        1ª regra de d: e*d ≅ 1 mod p*q  →  e*d mod p*q = 1
+        Embora ϕ() seja tecnicamente uma função, a gente taca logo o resultado de ϕ(p,q)
+        na variável fin.
     """
-    # The totient.
-    fin = (p - 1) * (q - 1)
-    # Grab a valid value for e at random.
+    # Totient / Totiente  (sei lá a escrita correta em pt)
+    fin = (p - 1) * (q - 1)  # fin / ϕ(p,q)
+
+    # Pega valores aleatórios até um servir.
     while True:
         # Pega um e qualquer pra tirar o mdc(e, fin) e a inversa de e mod fin .
-        e = randrange(2, fin)
+        e = randrange(2, fin)  # 1 não serve por motivos óbvios...
 
-        # Euclides Extendido nos da mdc(e, fin) == res
+        # Euclides Extendido nos da mdc(e, fin)
         res, coef = mdc_e(e, fin)
 
-        # Se o mdc for 1, pega a inversa de e mod fin de dentro da tabela gerada pelo algoritmo.
+        # Se o mdc for 1, pega a inversa de  e mod fin  de dentro da tabela gerada pelo algoritmo.
         """ Vale ressaltar aqui que quando o mdc for 1, o valor de 'a' tal que
-            'a' é a inversa modular de e mod fin, será o valor de 's' da última linha com
+            'a' é a inversa modular de  e mod fin  , será o valor de 's' da última linha com
             resto não nulo da tabela. Na sintaxe de python, len(coef) - 2 acerta a penultima linha
             da tabela que, por conta do próprio algorítmo, possui o último valor não nulo do resto e
             é onde 's' assumi o valor da desejada inversa multiplicativa 'a'. """
-        if res == 1:
-            i = len(coef) - 2
-            inv = coef[i]['s']
-            # Normaliza inversa quando negativa
+        if res == 1:  # Se mdc == 1:
+            i = len(coef) - 2  # Acessa penúltima linha, onde está ultimo resto não nulo.
+            inv = coef[i]['s']  # Pega o valor da inversa
+
+            # Certifica que a inversa não é negativa. Teoricamente, isso nunca ocorrerá...
             if inv > 0:
                 return e, inv
 
@@ -111,13 +116,14 @@ def p2_exp_mod(a, k, m):
     :return: (a^k) mod m
     """
     if k <= 2:
-        return a**k % m
+        return a ** k % m
     else:
-        return (p2_exp_mod(a, k//2, m) * p2_exp_mod(a, k//2, m)) % m
+        return (p2_exp_mod(a, k // 2, m) * p2_exp_mod(a, k // 2, m)) % m
 
 
 def exp_mod(a, k, m):
-    """Calcula  a^k mod m  para  a,k,m  sendo números inteiros.
+    """Exponenciação modular rápida usando aritmética modular.
+        Calcula  a^k mod m  para  a,k,m  sendo números inteiros.
     :param a: Valor base.
     :param k: Potência de a.
     :param m: Valor para o qual calcular módulo.
@@ -125,6 +131,7 @@ def exp_mod(a, k, m):
     """
     # Gera string com representação binária do valor de k.
     binary_k = f'{k:b}'
+
     # Pega contagem de bits.
     bitcount = len(binary_k)
 
@@ -136,8 +143,8 @@ def exp_mod(a, k, m):
         # Checa se bit é 1, pois não nos interessa os 0.
         if binary_k[i] == '1':
             # Calcula a potência a elevar o 2, baseado na casa do bit.
-            p = bitcount - 1 - i  # O -1 é pq arrays começam no índice 0.
-            # Chama recursão que calcula exponenciação modular para potêcnias de 2 para o bit atual e incrementa A.
+            p = bitcount - 1 - i  # O -1 é devido às arrays irem de  0  a  bitcount-1  em seus índices.
+            # Chama recursão que calcula exp. mod. para potêcnias de 2 para o bit atual e atualiza A.
             A *= p2_exp_mod(a, 2 ** p, m)
 
     # Tira o módulo de A e o retorna.
@@ -146,80 +153,12 @@ def exp_mod(a, k, m):
 
 def modmultinv(e, fin):
     """Calcula, por força bruta, a inversa multiplicativa modular de dois números.
-        dR1: d*e mod ϕ(n) = 1
+        regra de d: d*e mod ϕ(n) = 1
+        Essa função seria totalmente desnecessária não fosse uma exigência redundante
+        do próprio trabalho de Matemática Discreta.
+        Contexto e mais detalhes nos comentários em  cryptoforked.py  .
     """
     for d in range(1, fin):
         if (e * d) % fin == 1:
             return d
     return None
-
-
-#################################### Não Usados ##########################################
-
-
-def ext_eucl_mdc(a, b):
-    """ Algoritmo de Euclides Extendido (Não usado).
-        mdc(a, b) = a*x + b*y
-        b*x_ + (a % b)*y_
-        "Algoritmos - Teoria e Prática", página 680
-    """
-    if b == 0:
-        return a, 1, 0
-    else:
-        m_, x_, y_ = ext_eucl_mdc(b, a % b)
-        m = m_
-        x = y_
-        y = x_ - (a / b) * y_
-        return m, x, y
-
-
-def exp_mod_rap(base, power, modulus):
-    """Exponenciação Modular Rápida (não usado).
-        "Algoritmos - Teoria e Prática", página 695.
-        power_bit_len recebe a quantidade de bits armazenando o número power.
-        Python usa a quantidade de bytes necessária para armazenar um número.
-        Isso pode ser observado definindo números de diferentes tamanhos para
-        uma variável a, e então chamando a.bit_length(). Quanto maior o número
-        definindo para a, mais bits estarão em uso.
-    """
-    result = 1
-    power_bit_len = power.bit_length()
-    for i in range(0, power_bit_len):
-        result = (result * result) % modulus
-        mask = 1 << i
-        bit_val = power & mask
-        if bit_val:  # bit_val != 0 ?
-            result = (result * base) % modulus
-    return result
-
-
-def fpow(b, e):
-    """Exponenciação rápida (Não usado).
-        Se 'e' for par:    b² ** (e/2)
-        Se 'e' for impar:  b  * (b² ** (e-1)/2)
-    """
-    # Fim de recursão
-    if e < 3 and e > -3: return b ** e
-    if e % 2 == 0:
-        # Retorne (b*b) ** (e/2)
-        return fpow(b * b, e // 2)
-    else:
-        # Retorne b * ( (b*b) ** ((e-1)/2) )
-        return b * fpow(b * b, (e - 1) // 2)
-
-
-def encrypt(plain_txt, e, n):
-    """Criptografa uma string (Não usado)."""
-    cripto = ''
-    for c in plain_txt:
-        cripto += ' {}'.format(encryptpart(ord(c), e, n))
-    return cripto.strip(' ')
-
-
-def decrypt(encry_text, d, n):
-    """Descriptografa string criptografada (Não usado)."""
-    plain = ''
-    encry_code_list = encry_text.split(' ')
-    for code in encry_code_list:
-        plain += chr(decryptpart(int(code), d, n))
-    return plain
